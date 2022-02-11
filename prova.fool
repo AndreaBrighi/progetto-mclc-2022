@@ -11,5 +11,5 @@ in
   print ( 
     if g() 
       then { y }
-      else { 10 }
+      else { !true }
   ); 

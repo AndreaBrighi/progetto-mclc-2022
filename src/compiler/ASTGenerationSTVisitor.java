@@ -57,27 +57,84 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
-	public Node visitTimes(TimesContext c) {
+	public Node visitTimesDiv(TimesDivContext c) {
 		if (print) printVarAndProdName(c);
-		Node n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.TIMES().getSymbol().getLine());		// setLine added
-        return n;		
+		Node n;
+		Node l = visit(c.exp(0));
+		Node r = visit(c.exp(1));
+		if (c.TIMES() != null) {
+			n = new TimesNode(l, r);
+			n.setLine(c.TIMES().getSymbol().getLine());		// setLine added
+		} else if (c.DIV() != null){
+			n = new DivNode(l, r);
+			n.setLine(c.DIV().getSymbol().getLine());		// setLine added
+		} else {
+			throw new RuntimeException("TimesDivContext must be times or div");
+		}
+        return n;
 	}
 
 	@Override
-	public Node visitPlus(PlusContext c) {
+	public Node visitPlusMinus(PlusMinusContext c) {
 		if (print) printVarAndProdName(c);
-		Node n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.PLUS().getSymbol().getLine());	
-        return n;		
+		Node n;
+		Node l = visit(c.exp(0));
+		Node r = visit(c.exp(1));
+		if (c.PLUS() != null) {
+			n = new PlusNode(l, r);
+			n.setLine(c.PLUS().getSymbol().getLine());
+		} else if (c.MINUS() != null) {
+			n = new MinusNode(l, r);
+			n.setLine(c.MINUS().getSymbol().getLine());
+		} else {
+			throw new RuntimeException("PlusMinusContext must be times or div");
+		}
+        return n;
 	}
 
 	@Override
-	public Node visitEq(EqContext c) {
+	public Node visitComp(CompContext c) {
 		if (print) printVarAndProdName(c);
-		Node n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.EQ().getSymbol().getLine());		
-        return n;		
+		Node n;
+		Node l = visit(c.exp(0));
+		Node r = visit(c.exp(1));
+		if (c.EQ() != null) {
+			n = new EqualNode(l, r);
+			n.setLine(c.EQ().getSymbol().getLine());
+		} else if (c.GE() != null) {
+			n = new GreaterEqualNode(l, r);
+			n.setLine(c.GE().getSymbol().getLine());
+		} else if (c.LE() != null) {
+			n = new LessEqualNode(l, r);
+			n.setLine(c.LE().getSymbol().getLine());
+		} else {
+			throw new RuntimeException("CompContext must be equal, greater equal or less equal");
+		}
+        return n;
+	}
+
+	@Override
+	public Node visitNot(NotContext c) {
+		if (print) printVarAndProdName(c);
+		return new NotNode(visit(c.exp()));
+	}
+
+	@Override
+	public Node visitAndOr(AndOrContext c) {
+		if (print) printVarAndProdName(c);
+		Node n;
+		Node l = visit(c.exp(0));
+		Node r = visit(c.exp(1));
+		if (c.AND() != null) {
+			n = new AndNode(l, r);
+			n.setLine(c.AND().getSymbol().getLine());
+		} else if (c.OR() != null) {
+			n = new OrNode(l, r);
+			n.setLine(c.OR().getSymbol().getLine());
+		} else {
+			throw new RuntimeException("AndOrContext must be AND or OR");
+		}
+		return n;
 	}
 
 	@Override
@@ -181,4 +238,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		n.setLine(c.ID().getSymbol().getLine());
 		return n;
 	}
+
+	// OPERATOR EXTENSION
+
 }

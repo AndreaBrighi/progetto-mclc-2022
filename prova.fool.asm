@@ -14,7 +14,14 @@ lw
 js
 push 1
 beq label4
-push 10
+push 1
+push 1
+beq label6
+push 1
+b label7
+label6:
+push 0
+label7:
 b label5
 label4:
 lfp
