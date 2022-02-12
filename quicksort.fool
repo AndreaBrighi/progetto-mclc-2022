@@ -2,10 +2,9 @@ let
 
   class List (f:int, r:List) {
     fun first:int() f;
-    fun rest:List() r; 
+    fun rest:List() r;
   }
-  
-  fun printList:List (l:List) 
+  fun printList:List (l:List)
       let  
         fun makeList:List (l:List, i:int) new List (i,l);
       in 
@@ -19,8 +18,8 @@ let
         else {new List(l1.first(), append(l1.rest(),l2))} ;  
     
   /* filtra la lista "l" mantenendo solo gli elementi */
-  /* che sono: <= a "pivot", se "before" è true       */
-  /*            > a "pivot", se "before" è false      */
+  /* che sono: <= a "pivot", se "before" ï¿½ true       */
+  /*            > a "pivot", se "before" ï¿½ false      */
   fun filter:List (l:List, pivot:int, before:bool) 
       let
         fun accept:bool (cond:bool)
@@ -35,7 +34,7 @@ let
   
   fun quicksort:List (l:List)    
       let
-        var pivot:int = if (l==null) then {0} else {l.first()}; 
+        var pivot:int = if (l==null) then {0} else {l.first()};
       in          
         if (l == null) 
            then {null}
