@@ -1,26 +1,27 @@
 package svm;
 public class ExecuteVM {
-    
+
     public static final int CODESIZE = 10000;
     public static final int MEMSIZE = 10000;
-    
+
     private int[] code;
     private int[] memory = new int[MEMSIZE];
-    
+
     private int ip = 0;
     private int sp = MEMSIZE;
-    
-    private int hp = 0;       
-    private int fp = MEMSIZE; 
-    private int ra;           
+
+    private int hp = 0;
+    private int fp = MEMSIZE;
+    private int ra;
     private int tm;
-    
+
     public ExecuteVM(int[] code) {
       this.code = code;
     }
-    
+
     public void cpu() {
       while ( true ) {
+          System.out.println("Executing op (line " + ip + "): " + (ip < code.length ? SVMParser.VOCABULARY.getSymbolicName(code[ip]) : "(unknown, index: " + ip));
         int bytecode = code[ip++]; // fetch
         int v1,v2;
         int address;
@@ -35,6 +36,7 @@ public class ExecuteVM {
             v1=pop();
             v2=pop();
             push(v2 + v1);
+            System.out.println("Add result: " + (v2+v1));
             break;
           case SVMParser.MULT :
             v1=pop();
@@ -53,12 +55,12 @@ public class ExecuteVM {
             break;
           case SVMParser.STOREW : //
             address = pop();
-            memory[address] = pop();    
+            memory[address] = pop();
             break;
           case SVMParser.LOADW : //
             push(memory[pop()]);
             break;
-          case SVMParser.BRANCH : 
+          case SVMParser.BRANCH :
             address = code[ip];
             ip = address;
             break;
@@ -85,10 +87,10 @@ public class ExecuteVM {
          case SVMParser.LOADRA : //
             push(ra);
             break;
-         case SVMParser.STORETM : 
+         case SVMParser.STORETM :
             tm=pop();
             break;
-         case SVMParser.LOADTM : 
+         case SVMParser.LOADTM :
             push(tm);
             break;
          case SVMParser.LOADFP : //
@@ -113,14 +115,14 @@ public class ExecuteVM {
             return;
         }
       }
-    } 
-    
+    }
+
     private int pop() {
       return memory[sp++];
     }
-    
+
     private void push(int v) {
       memory[--sp] = v;
     }
-    
+
 }

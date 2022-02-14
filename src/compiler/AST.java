@@ -275,6 +275,7 @@ public class AST {
 		final Node exp;
 
 		String label;
+		int offset;
 
 		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
 			id=i;
