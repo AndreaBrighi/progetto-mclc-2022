@@ -8,9 +8,9 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import compiler.lib.*;
 import compiler.exc.*;
-import svm.SVMLexer;
-import svm.SVMParser;
-import svm.ExecuteVM;
+import visualsvm.SVMLexer;
+import visualsvm.SVMParser;
+import visualsvm.ExecuteVM;
 
 
 public class Test {
@@ -80,8 +80,8 @@ public class Test {
     	if (lexerASM.lexicalErrors+parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
 
     	System.out.println("Running generated code via Stack Virtual Machine.");
-		ExecuteVM vm = new ExecuteVM(parserASM.code);
-		//ExecuteVM vm = new ExecuteVM(parserASM.code, parserASM.sourceMap, Files.readAllLines(Paths.get(fileName+".asm")));
+		//ExecuteVM vm = new ExecuteVM(parserASM.code);
+		ExecuteVM vm = new ExecuteVM(parserASM.code, parserASM.sourceMap, Files.readAllLines(Paths.get(fileName+".asm")));
 		vm.cpu();
     }
 }
