@@ -24,7 +24,7 @@ shp
 push 5
 push 2
 add
-/*NewNode*/push 5
+/*NewNode*/push 55
 /*EmptyNode*/push -1
 lhp
 sw
@@ -104,6 +104,7 @@ lw
 stm
 ltm
 ltm
+/*diff*/lw
 push 0
 add
 lw
@@ -114,6 +115,7 @@ lw
 stm
 ltm
 ltm
+/*diff*/lw
 push 0
 add
 lw

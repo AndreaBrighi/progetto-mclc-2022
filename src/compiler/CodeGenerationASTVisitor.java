@@ -154,12 +154,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"lfp", getAR, // retrieve address of frame containing "id" declaration
 					// by following the static chain (of Access Links)
 					// DA QUI DIFFERENZA (l'access link è l'object pointer)
-					"/*differenza*/push "+n.entry.offset, "add", // compute address of "id" declaration
-					"lw", // load value of "id" variable
 					"stm", // set $tm to popped value (with the aim of duplicating top of stack)
 					"ltm", // load Access Link (pointer to frame of function "id" declaration)
 					"ltm", // duplicate top of stack (object pointer address)
-					"lw",	// load dispatch pointer
+					"lw", // load value of "id" variable
 					"push "+n.entry.offset, "add", // compute address of "id" declaration
 					"lw", // load address of "id" function
 					"js"  // jump to popped address (saving address of subsequent instruction in $ra)

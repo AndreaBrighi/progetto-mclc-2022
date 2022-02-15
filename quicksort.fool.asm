@@ -38,6 +38,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -58,6 +59,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -78,6 +80,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -98,6 +101,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -118,6 +122,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -138,6 +143,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -225,6 +231,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -262,9 +269,13 @@ beq label0
 lfp
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 0
 add
 lw
@@ -273,9 +284,13 @@ print
 lfp
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 1
 add
 lw
@@ -329,9 +344,13 @@ push 1
 beq label4
 /*NewNode*//*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 0
 add
 lw
@@ -343,9 +362,13 @@ add
 lw
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 1
 add
 lw
@@ -372,6 +395,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -453,9 +477,13 @@ beq label12
 lfp
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 0
 add
 lw
@@ -491,9 +519,13 @@ add
 lw
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 1
 add
 lw
@@ -511,9 +543,13 @@ b label17
 label16:
 /*NewNode*//*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 0
 add
 lw
@@ -529,9 +565,13 @@ add
 lw
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 1
 add
 lw
@@ -558,6 +598,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -600,9 +641,13 @@ push 1
 beq label20
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 0
 add
 lw
@@ -638,9 +683,13 @@ add
 lw
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 1
 add
 lw
@@ -676,6 +725,7 @@ push 1
 add
 shp
 push 9998
+lw
 lhp
 sw
 lhp
@@ -692,9 +742,13 @@ add
 lw
 /*ClassCallNode*/lfp
 lfp
+push 1
+add
+lw
 stm
 ltm
 ltm
+lw
 push 1
 add
 lw

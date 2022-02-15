@@ -16,7 +16,7 @@ import visualsvm.ExecuteVM;
 public class Test {
     public static void main(String[] args) throws Exception {
    			
-    	String fileName = "quicksort_basic.fool";
+    	String fileName = "quicksort.fool";
 
     	CharStream chars = CharStreams.fromFileName(fileName);
     	FOOLLexer lexer = new FOOLLexer(chars);

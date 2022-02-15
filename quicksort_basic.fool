@@ -5,7 +5,7 @@ let
     fun doubleFirst:int() first()*first();
   }
   var y:int = 5+2;
-  var l: List = new List(5, null);
+  var l: List = new List(55, null);
 in
   print (
     l.doubleFirst()
