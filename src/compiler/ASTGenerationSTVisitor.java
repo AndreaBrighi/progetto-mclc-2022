@@ -249,6 +249,8 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<FieldNode> fieldsList = new ArrayList<>();
 		// Start from id 2 if extends
 		int initialIdIndex = c.EXTENDS() != null ? 2 : 1;
+		String superId = c.EXTENDS() != null ? c.ID(1).getText() : null;
+
 		for (int i = initialIdIndex; i < c.ID().size(); i++) {
 			FieldNode p = new FieldNode(c.ID(i).getText(),(TypeNode) visit(c.type(i-initialIdIndex)));
 			p.setLine(c.ID(i).getSymbol().getLine());
@@ -258,7 +260,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		for (MethdecContext dec : c.methdec()) methodsList.add((MethodNode) visit(dec));
 		Node n = null;
 		if (c.ID().size()>0) { //non-incomplete ST
-			n = new ClassNode(c.ID(0).getText(),fieldsList,methodsList);
+			n = new ClassNode(superId, c.ID(0).getText(),fieldsList,methodsList);
 			n.setLine(c.CLASS().getSymbol().getLine());
 		}
 		return n;

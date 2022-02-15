@@ -276,7 +276,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		}
 		//creare una nuova hashmap per la symTable
 		nestingLevel++;
-		symTable.add(hmn);
 		int prevNLDecOffset=decOffset; // stores counter for offset of declarations at previous nesting level
 		decOffset=0;
 

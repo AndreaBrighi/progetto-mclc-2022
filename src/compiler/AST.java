@@ -246,14 +246,18 @@ public class AST {
 	// OBJECT-ORIENTED EXTENSION
 
 	public static class ClassNode extends DecNode {
+		final String superID;
 		final String id;
 		final List<FieldNode> fields;
 		final List<MethodNode> methods;
 
-		ClassNode(String i, List<FieldNode> fl, List<MethodNode> ml) {
-			id=i;
-			fields=Collections.unmodifiableList(fl);
-			methods=Collections.unmodifiableList(ml);
+		STentry superEntry;
+
+		ClassNode(String sID, String i, List<FieldNode> fl, List<MethodNode> ml) {
+			superID=sID;
+			id=Objects.requireNonNull(i);
+			fields=Collections.unmodifiableList(Objects.requireNonNull(fl));
+			methods=Collections.unmodifiableList(Objects.requireNonNull(ml));
 		}
 
 		@Override
