@@ -16,7 +16,7 @@ import visualsvm.ExecuteVM;
 public class Test {
     public static void main(String[] args) throws Exception {
    			
-    	String fileName = "quicksort.fool";
+    	String fileName = "bankloan.fool";
 
     	CharStream chars = CharStreams.fromFileName(fileName);
     	FOOLLexer lexer = new FOOLLexer(chars);
@@ -60,7 +60,7 @@ public class Test {
 		
 		if ( frontEndErrors > 0) System.exit(1);
 
-    	/*System.out.println("Generating code.");
+    	System.out.println("Generating code.");
     	String code = new CodeGenerationASTVisitor().visit(ast);        
     	BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
     	out.write(code);
@@ -82,7 +82,7 @@ public class Test {
     	System.out.println("Running generated code via Stack Virtual Machine.");
 		//ExecuteVM vm = new ExecuteVM(parserASM.code);
 		ExecuteVM vm = new ExecuteVM(parserASM.code, parserASM.sourceMap, Files.readAllLines(Paths.get(fileName+".asm")));
-		vm.cpu();*/
+		vm.cpu();
     }
 }
 
