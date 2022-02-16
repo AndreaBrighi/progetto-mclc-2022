@@ -282,16 +282,20 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				System.out.println("Field id " + field.id + " at line "+ n.getLine() +" already declared");
 				stErrors++;
 			}
+			int offset;
 			if(currentSTEntry != null) {
 				if (currentSTEntry.type instanceof MethodTypeNode) {
 					System.out.println("Can't override method " + field.id + " with a field");
 					stErrors++;
 				}
-				hmn.put(field.id, new STentry(nestingLevel, field.getType(), currentSTEntry.offset));
+				offset = currentSTEntry.offset;
 			} else {
-				hmn.put(field.id, new STentry(nestingLevel, field.getType(), parOffset--));
+				offset = parOffset--;
 			}
-			int fieldIndex = Math.abs(hmn.get(field.id).offset)-1;
+			hmn.put(field.id, new STentry(nestingLevel, field.getType(), offset));
+
+			field.offset = offset;
+			int fieldIndex = Math.abs(offset)-1;
 			if (fieldIndex < classTypeN.allFields.size()) {
 				classTypeN.allFields.set(fieldIndex, field.getType());
 			} else {
