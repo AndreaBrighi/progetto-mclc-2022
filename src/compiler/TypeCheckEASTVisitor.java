@@ -268,15 +268,15 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		// Check types
 		if (n.superEntry != null) {
 			ClassTypeNode classType = (ClassTypeNode) n.getType();
-			ClassTypeNode superType = (ClassTypeNode) n.superEntry.type;
-			for (int i = 0; i < superType.allMethods.size(); i++) {
-				if (!isSubtype(classType.allMethods.get(i), superType.allMethods.get(i))) {
-					throw new TypeException("Method " + classType.allMethods.get(i) + "is not subtype of " + superType.allMethods.get(i), n.getLine());
+			ClassTypeNode parentCT = (ClassTypeNode) n.superEntry.type;
+			for (int i = 0; i < parentCT.allMethods.size(); i++) {
+				if (!isSubtype(classType.allMethods.get(i), parentCT.allMethods.get(i))) {
+					throw new TypeException("Method " + classType.allMethods.get(i) + "is not subtype of " + parentCT.allMethods.get(i), n.getLine());
 				}
 			}
-			for (int i = 0; i < superType.allFields.size(); i++) {
-				if (!isSubtype(classType.allFields.get(i), superType.allFields.get(i))) {
-					throw new TypeException("Field " + classType.allFields.get(i) + "is not subtype of " + superType.allFields.get(i), n.getLine());
+			for (int i = 0; i < parentCT.allFields.size(); i++) {
+				if (!isSubtype(classType.allFields.get(i), parentCT.allFields.get(i))) {
+					throw new TypeException("Field " + classType.allFields.get(i) + "is not subtype of " + parentCT.allFields.get(i), n.getLine());
 				}
 			}
 		}
