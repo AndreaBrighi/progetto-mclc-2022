@@ -352,7 +352,13 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		// se eredito devo andare a prendere la dispatch table della classe da cui eredito
 		// e copiarne il contenuto
 		// Per trovarla usa offset classe da cui erediti
-		ArrayList<String> dispatchTable = new ArrayList<>();
+		ArrayList<String> dispatchTable;
+		if (n.superID != null) {
+			int superPos = -n.superEntry.offset-2;
+			dispatchTable = new ArrayList<>(dispatchTables.get(superPos));
+		} else {
+			dispatchTable = new ArrayList<>();
+		}
 		dispatchTables.add(dispatchTable);
 		for (MethodNode dec : n.methods) {
 			visit(dec);
