@@ -23,14 +23,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			entry = symTable.get(j--).get(id);	
 		return entry;
 	}
-	private boolean checkTypeDefined(TypeNode type) {
-		if (type instanceof BoolTypeNode || type instanceof IntTypeNode) {
-			return true;
-		} else if (type instanceof RefTypeNode refType){
-			return classTable.containsKey(refType.id);
-		}
-		return false;
-	}
 	@Override
 	public Void visitNode(ProgLetInNode n) {
 		if (print) printNode(n);
@@ -53,16 +45,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	public Void visitNode(FunNode n) {
 		if (print) printNode(n);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-		if(!checkTypeDefined(n.retType)) {
-			System.out.println("Fun " + n.id + ": has unknown return type " + n.retType);
-			stErrors++;
-		}
 		List<TypeNode> parTypes = new ArrayList<>();  
 		for (ParNode par : n.parlist) {
-			if(!checkTypeDefined(par.getType())) {
-				System.out.println("Fun " + n.id + ": par id " + par.id + "has unknown type " + par.getType());
-				stErrors++;
-			}
 			parTypes.add(par.getType());
 		}
 		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes,n.retType),decOffset--);
@@ -98,10 +82,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		visit(n.exp);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		STentry entry = new STentry(nestingLevel,n.getType(),decOffset--);
-		if(!checkTypeDefined(n.getType())) {
-			System.out.println("Var id " + n.id + "has unknown type " + n.getType());
-			stErrors++;
-		}
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" already declared");
@@ -254,38 +234,74 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	@Override
 	public Void visitNode(ClassNode n) throws VoidException {
 		if (print) printNode(n);
+		// TODO: Controlla che nesting level sia 0 oppure mettile sempre in ambiente globale ????
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-		Map<String, STentry> hmn = new HashMap<>();
-		classTable.put(n.id, hmn);
-		ArrayList<TypeNode> parTypes = new ArrayList<>();
-		for (FieldNode field : n.fields) {
-			if(!checkTypeDefined(field.getType())) {
-				System.out.println("Method " + n.id + ": par id " + field.id + "has unknown type " + field.getType());
-				stErrors++;
-			}
-			parTypes.add(field.getType());
-		}
-		ArrayList<ArrowTypeNode> methodTypes = new ArrayList<>();
-		for (MethodNode method : n.methods) methodTypes.add((ArrowTypeNode) method.getType());
 
-		STentry entry = new STentry(nestingLevel, new ClassTypeNode(parTypes, methodTypes),decOffset--);
+		ClassTypeNode classTypeN;
+		if (n.superID != null) {
+			STentry superEntry = hm.get(n.superID);
+			ClassTypeNode superNode = (ClassTypeNode) superEntry.type;
+			classTypeN = new ClassTypeNode(new ArrayList<>(superNode.allFields), new ArrayList<>(superNode.allMethods));
+
+			// Set super entry
+			n.superEntry = superEntry;
+		} else {
+			classTypeN = new ClassTypeNode(new ArrayList<>(), new ArrayList<>());
+		}
+		n.setType(classTypeN);
+		STentry entry = new STentry(nestingLevel, classTypeN, decOffset--);
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Class id " + n.id + " at line "+ n.getLine() +" already declared");
 			stErrors++;
 		}
-		//creare una nuova hashmap per la symTable
-		nestingLevel++;
-		int prevNLDecOffset=decOffset; // stores counter for offset of declarations at previous nesting level
-		decOffset=0;
 
-		int parOffset=-1;
-		for (FieldNode field : n.fields)
-			if (hmn.put(field.id, new STentry(nestingLevel,field.getType(),parOffset--)) != null) {
-				System.out.println("Field id " + field.id + " at line "+ n.getLine() +" already declared");
-				stErrors++;
+		// Aggiunta del nome della classe mappato a virtual table
+		Map<String, STentry> hmn;
+		if (n.superID != null) {
+			hmn = new HashMap<>(classTable.get(n.superID));
+		} else {
+			hmn = new HashMap<>();
+		}
+		classTable.put(n.id, hmn);
+
+		nestingLevel++;
+		symTable.add(hmn);
+		int prevNLDecOffset=decOffset; // stores counter for offset of declarations at previous nesting level
+
+		// Method offset starts at superclass method count
+		decOffset=(classTypeN.allMethods.size());
+
+		// Par offset starts at superclass field count +1
+		int parOffset=-(classTypeN.allFields.size()+1);
+		for (FieldNode field : n.fields) {
+			STentry currentSTEntry = hmn.get(field.id);
+			if(currentSTEntry != null) {
+				if (currentSTEntry.type instanceof MethodTypeNode) {
+					System.out.println("Can't override method " + field.id + " with a field");
+					stErrors++;
+				}
+				hmn.put(field.id, new STentry(nestingLevel, field.getType(), currentSTEntry.offset));
+			} else {
+				hmn.put(field.id, new STentry(nestingLevel, field.getType(), parOffset--));
 			}
-		for (MethodNode dec : n.methods) visit(dec);
+			int fieldIndex = Math.abs(hmn.get(field.id).offset)-1;
+			if (fieldIndex < classTypeN.allFields.size()) {
+				classTypeN.allFields.set(fieldIndex, field.getType());
+			} else {
+				classTypeN.allFields.add(field.getType());
+			}
+		}
+		for (MethodNode dec : n.methods) {
+			visit(dec);
+			int methodIndex = dec.offset;
+			ArrowTypeNode methodType = (ArrowTypeNode) dec.getType();
+			if (methodIndex < classTypeN.allMethods.size()) {
+				classTypeN.allMethods.set(methodIndex, methodType);
+			} else {
+				classTypeN.allMethods.add(methodType);
+			}
+		}
 		//rimuovere la hashmap corrente poiche' esco dallo scope
 		symTable.remove(nestingLevel--);
 		decOffset=prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
@@ -296,24 +312,23 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	public Void visitNode(MethodNode n) {
 		if (print) printNode(n);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-		if(!checkTypeDefined(n.retType)) {
-			System.out.println("Method " + n.id + ": has unknown return type " + n.retType);
-			stErrors++;
-		}
 		List<TypeNode> parTypes = new ArrayList<>();
 		for (ParNode par : n.parlist) {
-			if(!checkTypeDefined(par.getType())) {
-				System.out.println("Method " + n.id + ": par id " + par.id + "has unknown type " + par.getType());
-				stErrors++;
-			}
 			parTypes.add(par.getType());
 		}
-		STentry entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)),decOffset++);
 		//inserimento di ID nella symtable
-		if (hm.put(n.id, entry) != null) {
-			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared");
-			stErrors++;
+		STentry currentSTEntry = hm.get(n.id);
+		STentry entry;
+		if(currentSTEntry != null) {
+			if (!(currentSTEntry.type instanceof MethodTypeNode)) {
+				System.out.println("Can't override field " + n.id + " with a method");
+				stErrors++;
+			}
+			entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)), currentSTEntry.offset);
+		} else {
+			entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)),decOffset++);
 		}
+		hm.put(n.id, entry);
 		n.offset = entry.offset;
 		//creare una nuova hashmap per la symTable
 		nestingLevel++;

@@ -259,6 +259,9 @@ public class AST {
 			fields=Collections.unmodifiableList(Objects.requireNonNull(fl));
 			methods=Collections.unmodifiableList(Objects.requireNonNull(ml));
 		}
+		void setType(ClassTypeNode t) {
+			type = Objects.requireNonNull(t);
+		}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
