@@ -40,11 +40,13 @@ public class TypeRels {
 			return false;
 		}
 	}
-
+	public static String superType(String a) {
+		return superType.get(a);
+	}
 	private static boolean isSubTypeWithID(String a, String b) {
 		String superID = a;
 		do {
-			superID = superType.get(superID);
+			superID = superType(superID);
 		} while (superID != null && !superID.equals(b));
 		return superID != null;
 	}
