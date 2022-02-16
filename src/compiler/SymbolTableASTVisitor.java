@@ -9,6 +9,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	
 	private List<Map<String, STentry>> symTable = new ArrayList<>();
 	private Map<String, Map<String, STentry>> classTable = new HashMap<>();
+	private Set<String> classFM;
 	private int nestingLevel=0; // current nesting level
 	private int decOffset=-2; // counter for offset of local declarations at current nesting level 
 	int stErrors=0;
@@ -235,6 +236,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	public Void visitNode(ClassNode n) throws VoidException {
 		if (print) printNode(n);
 		// TODO: Controlla che nesting level sia 0 oppure mettile sempre in ambiente globale ????
+		classFM = new HashSet<>();
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 
 		ClassTypeNode classTypeN;
@@ -276,6 +278,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		int parOffset=-(classTypeN.allFields.size()+1);
 		for (FieldNode field : n.fields) {
 			STentry currentSTEntry = hmn.get(field.id);
+			if (!classFM.add(field.id)) {
+				System.out.println("Field id " + field.id + " at line "+ n.getLine() +" already declared");
+				stErrors++;
+			}
 			if(currentSTEntry != null) {
 				if (currentSTEntry.type instanceof MethodTypeNode) {
 					System.out.println("Can't override method " + field.id + " with a field");
@@ -319,6 +325,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		//inserimento di ID nella symtable
 		STentry currentSTEntry = hm.get(n.id);
 		STentry entry;
+		if (!classFM.add(n.id)) {
+			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared");
+			stErrors++;
+		}
 		if(currentSTEntry != null) {
 			if (!(currentSTEntry.type instanceof MethodTypeNode)) {
 				System.out.println("Can't override field " + n.id + " with a method");
