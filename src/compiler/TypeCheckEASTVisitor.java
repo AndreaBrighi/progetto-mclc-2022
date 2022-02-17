@@ -269,14 +269,20 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if (n.superEntry != null) {
 			ClassTypeNode classType = (ClassTypeNode) n.getType();
 			ClassTypeNode parentCT = (ClassTypeNode) n.superEntry.type;
-			for (int i = 0; i < parentCT.allMethods.size(); i++) {
-				if (!isSubtype(classType.allMethods.get(i), parentCT.allMethods.get(i))) {
-					throw new TypeException("Method " + classType.allMethods.get(i) + "is not subtype of " + parentCT.allMethods.get(i), n.getLine());
+
+			for(MethodNode method: n.methods){
+				int i=method.offset;
+				if(i<parentCT.allMethods.size()){
+					if (!isSubtype(classType.allMethods.get(i), parentCT.allMethods.get(i))) {
+						throw new TypeException("Bad overriding: Method " + method.id + " of class "+n.id+" is not subtype of superclass method",n.getLine());
+					}
 				}
 			}
-			for (int i = 0; i < parentCT.allFields.size(); i++) {
+			for (FieldNode field: n.fields){
+				int i=-field.offset-1;
+				if(i<parentCT.allFields.size())
 				if (!isSubtype(classType.allFields.get(i), parentCT.allFields.get(i))) {
-					throw new TypeException("Field " + classType.allFields.get(i) + "is not subtype of " + parentCT.allFields.get(i), n.getLine());
+					throw new TypeException("Bad overriding: Field" + field.id + " of class "+n.id+" is not subtype of superclass field", n.getLine());
 				}
 			}
 		}
