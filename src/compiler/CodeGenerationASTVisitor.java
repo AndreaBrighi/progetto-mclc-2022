@@ -155,10 +155,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					// by following the static chain (of Access Links)
 					// DA QUI DIFFERENZA (l'access link è l'object pointer)
 					"stm", // set $tm to popped value (with the aim of duplicating top of stack)
-					"ltm", // load Access Link (pointer to frame of function "id" declaration)
+					"ltm", // load object pointer
 					"ltm", // duplicate top of stack (object pointer address)
-					"lw", // load value of "id" variable
-					"push "+n.entry.offset, "add", // compute address of "id" declaration
+					"lw", // load value of dispatch pointer
+					"push "+n.entry.offset, "add", // compute address of method declaration
 					"lw", // load address of "id" function
 					"js"  // jump to popped address (saving address of subsequent instruction in $ra)
 			);
