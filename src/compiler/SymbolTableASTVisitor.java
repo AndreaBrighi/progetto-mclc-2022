@@ -242,7 +242,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     @Override
     public Void visitNode(ClassNode n) throws VoidException {
         if (print) printNode(n);
-        // TODO: Controlla che nesting level sia 0 oppure mettile sempre in ambiente globale ????
         classFM = new HashSet<>();
         Map<String, STentry> hm = symTable.get(nestingLevel);
 
