@@ -1,4 +1,4 @@
-// Generated from /Users/gzaccaroni/DocumentiLocali/Università/MCLC/progetto/src/compiler/FOOL.g4 by ANTLR 4.9.2
+// Generated from E:/E/ALEX/universita/magistrale/lcmc/progetto-mclc-2022/src/compiler\FOOL.g4 by ANTLR 4.9.2
 package compiler;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -131,6 +131,18 @@ public class FOOLBaseListener implements FOOLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPlusMinus(FOOLParser.PlusMinusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNewKey(FOOLParser.NewKeyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNewKey(FOOLParser.NewKeyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

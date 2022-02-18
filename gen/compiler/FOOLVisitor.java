@@ -1,4 +1,4 @@
-// Generated from /Users/gzaccaroni/DocumentiLocali/Università/MCLC/progetto/src/compiler/FOOL.g4 by ANTLR 4.9.2
+// Generated from E:/E/ALEX/universita/magistrale/lcmc/progetto-mclc-2022/src/compiler\FOOL.g4 by ANTLR 4.9.2
 package compiler;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -77,6 +77,13 @@ public interface FOOLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPlusMinus(FOOLParser.PlusMinusContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code newKey}
+	 * labeled alternative in {@link FOOLParser#exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNewKey(FOOLParser.NewKeyContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code pars}
 	 * labeled alternative in {@link FOOLParser#exp}.

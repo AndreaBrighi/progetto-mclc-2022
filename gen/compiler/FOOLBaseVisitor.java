@@ -1,4 +1,4 @@
-// Generated from /Users/gzaccaroni/DocumentiLocali/Università/MCLC/progetto/src/compiler/FOOL.g4 by ANTLR 4.9.2
+// Generated from E:/E/ALEX/universita/magistrale/lcmc/progetto-mclc-2022/src/compiler\FOOL.g4 by ANTLR 4.9.2
 package compiler;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -81,6 +81,13 @@ public class FOOLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements F
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitPlusMinus(FOOLParser.PlusMinusContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitNewKey(FOOLParser.NewKeyContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

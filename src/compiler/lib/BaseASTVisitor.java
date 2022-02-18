@@ -1,6 +1,7 @@
 package compiler.lib;
 
 import compiler.AST.*;
+import compiler.STentry;
 import compiler.exc.*;
 
 import static compiler.lib.FOOLlib.*;
@@ -89,5 +90,10 @@ public class BaseASTVisitor<S,E extends Exception> {
     public S visitNode(MethodTypeNode n) throws E {throw new UnimplException();}
     public S visitNode(RefTypeNode n) throws E {throw new UnimplException();}
     public S visitNode(EmptyTypeNode n) throws E {throw new UnimplException();}
+
+    // KEY ARGUMENT EXTENSION
+
+    public S visitNode(NArgNode n) throws E {throw new UnimplException();}
+    public S visitNode(NewKeyNode n) throws E {throw new UnimplException();}
 
 }

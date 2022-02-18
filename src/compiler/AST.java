@@ -391,4 +391,36 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
+
+	//KEY ARGUMENT EXTENSION
+
+	public static class NArgNode extends Node {
+		final String id;
+		STentry entry;
+		final Node exp;
+
+		public NArgNode(String id, Node exp) {
+			this.id = id;
+			this.exp = exp;
+		}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+
+	public static class NewKeyNode extends Node {
+		final String id;
+		STentry entry;
+		final List<NArgNode> arglist;
+
+		public NewKeyNode(String id, List<NArgNode> arglist) {
+			this.id = id;
+			this.arglist = Collections.unmodifiableList(arglist);
+		}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
 }
