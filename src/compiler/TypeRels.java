@@ -12,7 +12,7 @@ public class TypeRels {
 
 
 	public static boolean isTypeDefined(TypeNode type) {
-		if (type instanceof BoolTypeNode || type instanceof IntTypeNode) {
+		if (type instanceof BoolTypeNode || type instanceof IntTypeNode || type instanceof EmptyTypeNode) {
 			return true;
 		} else if (type instanceof RefTypeNode refType){
 			return classesIds.contains(refType.id);
