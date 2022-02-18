@@ -94,6 +94,6 @@ public class BaseASTVisitor<S,E extends Exception> {
     // KEY ARGUMENT EXTENSION
 
     public S visitNode(NArgNode n) throws E {throw new UnimplException();}
-    public S visitNode(NewKeyNode n) throws E {throw new UnimplException();}
+    public S visitNode(NNamedNode n) throws E {throw new UnimplException();}
 
 }

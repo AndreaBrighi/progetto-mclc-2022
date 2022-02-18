@@ -78,13 +78,6 @@ public interface FOOLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPlusMinus(FOOLParser.PlusMinusContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code newKey}
-	 * labeled alternative in {@link FOOLParser#exp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNewKey(FOOLParser.NewKeyContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code pars}
 	 * labeled alternative in {@link FOOLParser#exp}.
 	 * @param ctx the parse tree
@@ -154,6 +147,13 @@ public interface FOOLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTrue(FOOLParser.TrueContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code newNamed}
+	 * labeled alternative in {@link FOOLParser#exp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNewNamed(FOOLParser.NewNamedContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code id}
 	 * labeled alternative in {@link FOOLParser#exp}.

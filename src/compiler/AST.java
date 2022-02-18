@@ -409,12 +409,12 @@ public class AST {
 	}
 
 
-	public static class NewKeyNode extends Node {
+	public static class NNamedNode extends Node {
 		final String id;
 		STentry entry;
 		final List<NArgNode> arglist;
 
-		public NewKeyNode(String id, List<NArgNode> arglist) {
+		public NNamedNode(String id, List<NArgNode> arglist) {
 			this.id = id;
 			this.arglist = Collections.unmodifiableList(arglist);
 		}

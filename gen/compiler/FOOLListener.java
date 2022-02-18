@@ -122,18 +122,6 @@ public interface FOOLListener extends ParseTreeListener {
 	 */
 	void exitPlusMinus(FOOLParser.PlusMinusContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code newKey}
-	 * labeled alternative in {@link FOOLParser#exp}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewKey(FOOLParser.NewKeyContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code newKey}
-	 * labeled alternative in {@link FOOLParser#exp}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewKey(FOOLParser.NewKeyContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code pars}
 	 * labeled alternative in {@link FOOLParser#exp}.
 	 * @param ctx the parse tree
@@ -253,6 +241,18 @@ public interface FOOLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTrue(FOOLParser.TrueContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code newNamed}
+	 * labeled alternative in {@link FOOLParser#exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewNamed(FOOLParser.NewNamedContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newNamed}
+	 * labeled alternative in {@link FOOLParser#exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewNamed(FOOLParser.NewNamedContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code id}
 	 * labeled alternative in {@link FOOLParser#exp}.

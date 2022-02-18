@@ -338,7 +338,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
 
     @Override
-    public Node visitNewKey(NewKeyContext c) {
+    public Node visitNewNamed(NewNamedContext c) {
         if (print) printVarAndProdName(c);
         List<NArgNode> argList = new ArrayList<>();
         for (int i = 1; i < c.ID().size(); i++) {
@@ -349,7 +349,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
         Node n = null;
         if (c.ID().size() > 0) {
-            n= new NewKeyNode(c.ID(0).getText(),argList);
+            n= new NNamedNode(c.ID(0).getText(),argList);
             n.setLine(c.NEW().getSymbol().getLine());
         }
         return n;

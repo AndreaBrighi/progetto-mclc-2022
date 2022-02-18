@@ -43,7 +43,7 @@ exp     : exp (TIMES | DIV) exp #timesDiv
 	    | FALSE #false
 	    | NULL #null
 	    | NEW ID LPAR (exp (COMMA exp)* )? RPAR #new
-	    | NEW ID LPAR (ID ASS exp (COMMA ID ASS exp)* )? RPAR #newKey
+	    | NEW ID LPAR (ID ASS exp (COMMA ID ASS exp)* ) RPAR #newNamed
 	    | IF exp THEN CLPAR exp CRPAR ELSE CLPAR exp CRPAR #if
 	    | PRINT LPAR exp RPAR #print
         | ID #id
