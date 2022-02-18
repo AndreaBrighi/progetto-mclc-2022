@@ -260,9 +260,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(ClassNode n) throws TypeException {
 		if (print) printNode(n);
-		if(n.superID!=null){
-			superType.put(n.id, n.superID);
-		}
+		superType.put(n.id, n.superID);
 		classesIds.add(n.id);
 		for (MethodNode method : n.methods) visitNode(method);
 		for (FieldNode field : n.fields) visitNode(field);
@@ -276,7 +274,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				int i=method.offset;
 				if(i<parentCT.allMethods.size()){
 					if (!isSubtype(classType.allMethods.get(i), parentCT.allMethods.get(i))) {
-						throw new TypeException("Bad overriding: Method " + method.id + " of class "+n.id+" is not subtype of superclass method",n.getLine());
+						throw new TypeException("Wrong overriding: Method " + method.id + " of class "+n.id+" is not subtype of superclass method",n.getLine());
 					}
 				}
 			}
@@ -284,7 +282,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				int i=-field.offset-1;
 				if(i<parentCT.allFields.size())
 				if (!isSubtype(classType.allFields.get(i), parentCT.allFields.get(i))) {
-					throw new TypeException("Bad overriding: Field" + field.id + " of class "+n.id+" is not subtype of superclass field", n.getLine());
+					throw new TypeException("Wrong overriding: Field" + field.id + " of class "+n.id+" is not subtype of superclass field", n.getLine());
 				}
 			}
 		}
