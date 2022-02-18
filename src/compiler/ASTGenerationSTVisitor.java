@@ -215,7 +215,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitPrint(PrintContext c) {
 		if (print) printVarAndProdName(c);
-		return new PrintNode(visit(c.exp()));
+		Node n = new PrintNode(visit(c.exp()));
+		n.setLine(c.PRINT().getSymbol().getLine());
+		return n;
 	}
 
 	@Override
@@ -250,6 +252,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		List<FieldNode> fieldsList = new ArrayList<>();
 		// Start from id 2 if extends
+		boolean extend = c.EXTENDS() != null;
 		int initialIdIndex = c.EXTENDS() != null ? 2 : 1;
 		String superId = c.EXTENDS() != null ? c.ID(1).getText() : null;
 
@@ -261,7 +264,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<MethodNode> methodsList = new ArrayList<>();
 		for (MethdecContext dec : c.methdec()) methodsList.add((MethodNode) visit(dec));
 		Node n = null;
-		if (c.ID().size()>0) { //non-incomplete ST
+		if (((c.ID().size()>0) && !extend) || ((c.ID().size()>1) && extend)) { //non-incomplete ST
 			n = new ClassNode(superId, c.ID(0).getText(),fieldsList,methodsList);
 			n.setLine(c.CLASS().getSymbol().getLine());
 		}
@@ -286,15 +289,20 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		List<Node> arglist = new ArrayList<>();
 		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
-		Node n = new NewNode(c.ID().getText(), arglist);
-		n.setLine(c.ID().getSymbol().getLine());
+		Node n = null;
+		if (c.ID() != null) {
+			n = new NewNode(c.ID().getText(), arglist);
+			n.setLine(c.ID().getSymbol().getLine());
+		}
 		return n;
 	}
 
 	@Override
 	public Node visitNull(NullContext c) {
 		if (print) printVarAndProdName(c);
-		return new EmptyNode();
+		Node n = new EmptyNode();
+		n.setLine(c.NULL().getSymbol().getLine());
+		return n;
 	}
 
 	@Override
