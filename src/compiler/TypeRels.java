@@ -60,7 +60,7 @@ public class TypeRels {
 			String superId = art.id;
 			while (superId != null) {
 				if (isSubTypeWithID(brt.id, superId)) return new RefTypeNode(superId);
-				superId = superType(art.id);
+				superId = superType(superId);
 			}
 			return null;
 		} else if (((a instanceof IntTypeNode) && ((b instanceof IntTypeNode) || (b instanceof BoolTypeNode)))
