@@ -262,10 +262,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             System.out.println("Class id " + n.id + " at line " + n.getLine() + " already declared");
             stErrors++;
         }
-
         // Aggiunta del nome della classe mappato a virtual table
         Map<String, STentry> hmn;
         if (n.superID != null) {
+            if (!classTable.containsKey(n.id)) {
+                System.out.println("Super class " + n.id + " at line " + n.getLine() + " not declared");
+                stErrors++;
+            }
             hmn = new HashMap<>(classTable.get(n.superID));
         } else {
             hmn = new HashMap<>();
