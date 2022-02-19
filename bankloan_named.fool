@@ -21,8 +21,8 @@ let
       else {null};
   }
 
-  var bl:BankLoan = new MyBankLoan(loan=new TradingAcc(money=50000,invested=40000));
-  var myTradingAcc:TradingAcc = new TradingAcc(invested=20000,money=5000);
+  var bl:BankLoan = new MyBankLoan(new TradingAcc(money=50000,invested=40000));
+  var myTradingAcc:TradingAcc = new TradingAcc(invested=5000,money=20000);
   var myLoan:Account = bl.openLoan(myTradingAcc);
 
 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
