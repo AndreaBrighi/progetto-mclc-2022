@@ -417,4 +417,43 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     public Void visitNode(EmptyNode n) throws VoidException {
         return null;
     }
+
+    // NAMED ARGUMENTS EXTENSION
+
+
+    @Override
+    public Void visitNode(NNewNode n) throws VoidException {
+        if (print) printNode(n);
+        STentry classEntry = stLookup(n.id);
+        Map<String, STentry> clT = classTable.get(n.id);
+        if (classEntry == null || clT == null) {
+            System.out.println("Class id " + n.id + " at line " + n.getLine() + " not declared");
+            stErrors++;
+        } else {
+            n.entry = classEntry;
+
+            clT = new HashMap<>(clT); // Copy class Table
+            for (NArgNode arg : n.arglist) {
+                STentry argST = clT.get(arg.id);
+                if (argST == null) {
+                    System.out.println("Arg named " + arg.id + " at line " + arg.getLine() + " not declared");
+                    stErrors++;
+                } else {
+                    arg.entry = argST;
+                }
+                visit(arg.exp);
+                clT.remove(arg.id);
+            }
+            List<String> argsLeft = clT.entrySet().stream()
+                    .filter(el -> !(el.getValue().type instanceof MethodTypeNode))
+                    .map(Map.Entry::getKey)
+                    .toList();
+            if(!argsLeft.isEmpty()) {
+                String undefinedArgs = String.join(", ",   argsLeft);
+                System.out.println("Args named " + undefinedArgs + " at line " + n.getLine() + " not declared");
+                stErrors++;
+            }
+        }
+        return null;
+    }
 }

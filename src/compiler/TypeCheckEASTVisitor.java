@@ -337,7 +337,8 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	}
 
 	@Override
-	public TypeNode visitNode(NewNode n) throws TypeException {		if (print) printNode(n,n.id);
+	public TypeNode visitNode(NewNode n) throws TypeException {
+		if (print) printNode(n,n.id);
 		TypeNode classT = visit(n.entry);
 		if ( !(classT instanceof ClassTypeNode) )
 			throw new TypeException("Instantiation of a non-class "+n.id,n.getLine());
@@ -386,6 +387,25 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if (print) printNode(n);
 		for (Node field: n.allFields) visit(field);
 		for (Node method: n.allMethods) visit(method);
+		return null;
+	}
+
+	// NAMED ARGUMENTS EXTENSION
+
+	@Override
+	public TypeNode visitNode(NNewNode n) throws TypeException {
+		if (print) printNode(n,n.id);
+		TypeNode classT = visit(n.entry);
+		if ( !(classT instanceof ClassTypeNode) )
+			throw new TypeException("Instantiation of a non-class "+n.id,n.getLine());
+		for(NArgNode arg: n.arglist) visitNode(arg);
+		return new RefTypeNode(n.id);
+	}
+
+	@Override
+	public TypeNode visitNode(NArgNode n) throws TypeException {
+		if ( !(isSubtype(visit(n.exp), n.entry.type)) )
+			throw new TypeException("Wrong type for "+(n.id)+" argument in the instantiation of class",n.getLine());
 		return null;
 	}
 }
