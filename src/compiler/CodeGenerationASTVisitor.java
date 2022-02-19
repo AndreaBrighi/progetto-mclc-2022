@@ -158,7 +158,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"stm", // set $tm to popped value (with the aim of duplicating top of stack)
 					"ltm", // load object pointer
 					"ltm", // duplicate top of stack (object pointer address)
-					"lw", // load value of dispatch pointer
+					"lw", // load address of  "id" class (dispatch pointer)
 					"push "+n.entry.offset, "add", // compute address of method declaration
 					"lw", // load address of "id" function
 					"js"  // jump to popped address (saving address of subsequent instruction in $ra)
@@ -315,14 +315,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"cfp", // set $fp to $sp value
 						"lra", // load $ra value
 						declCode, // generate code for local declarations (they use the new $fp!!!)
-						visit(n.exp), // generate code for function body expression
-						"stm", // set $tm to popped value (function result)
+						visit(n.exp), // generate code for method body expression
+						"stm", // set $tm to popped value (method result)
 						popDecl, // remove local declarations from stack
 						"sra", // set $ra to popped value
 						"pop", // remove Access Link from stack
 						popParl, // remove parameters from stack
 						"sfp", // set $fp to popped value (Control Link)
-						"ltm", // load $tm value (function result)
+						"ltm", // load $tm value (method result)
 						"lra", // load $ra value
 						"js"  // jump to to popped address
 				)
@@ -358,9 +358,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"push " + label, // Push label
 					"lhp", // Load heap pointer
 					"sw",  // Store label at heap pointer
-					"lhp",
-					"push 1",
-					"add", // increment heap pointer,
+					"lhp", "push 1", "add", // increment heap pointer,
 					"shp" // store incremented heap pointer
 			);
 		}
@@ -386,7 +384,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
 		for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
 		return nlJoin(
-				"lfp", // load Control Link (pointer to frame of function "id" caller)
+				"lfp", // load Control Link (pointer to frame of method ID1.ID2 caller)
 				argCode, // generate code for argument expressions in reversed order
 				"lfp", getAR, // retrieve address of frame containing "ID1" declaration
 				// by following the static chain (of Access Links)
@@ -409,26 +407,20 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i=0; i< n.arglist.size(); i++) {
 			argCode = nlJoin(argCode, visit(n.arglist.get(i)));
 			copyArgCode = nlJoin(copyArgCode,
-					"lhp",
-					"sw",
-					"lhp",
-					"push 1",
-					"add",
-					"shp"
+					"lhp", "sw", "lhp", "push 1", "add", "shp"
+					// load the first value from the stack and load it at hp, then increment hp by 1
 			);
 		}
 		int pos = ExecuteVM.MEMSIZE+n.entry.offset;
 		return nlJoin(
-				argCode,
-				copyArgCode,
+				argCode, // generate code for argument expressions
+				copyArgCode, // generate code for push argument in heap
 				"push " + pos,
-				"lw",
+				"lw", // compute address of "id" class
 				"lhp",
-				"sw",
+				"sw", // Store in heap address of dispatch table of the instance
 				"lhp", // Duplicate lhp
-				"lhp", // Increment lhp
-				"push 1",
-				"add",
+				"lhp", "push 1", "add", // Increment lhp
 				"shp" // Store incremented lhp
 		);
 	}
@@ -444,19 +436,17 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (NArgNode nArgNode : map) argCode = nlJoin(argCode, visit(nArgNode.exp));
 		for (int i = 0; i < n.arglist.size(); i++)
 			getPar = nlJoin(getPar, "lhp", "sw", "lhp", "push 1", "add", "shp");
+		int pos = ExecuteVM.MEMSIZE+n.entry.offset;
 		return nlJoin(
-				argCode,
-				getPar,// generate code for argument expressions in reversed order
-				"push " + ExecuteVM.MEMSIZE, // retrieve address of frame containing class "id" declaration
-				"push " + n.entry.offset, "add", // compute address of "id" declaration
-				"lw", // load value of "id" variable
+				argCode, // generate code for argument expressions
+				getPar, // generate code for push argument in heap
+				"push " + pos,
+				"lw", // compute address of "id" class
 				"lhp",
-				"sw",
-				"lhp",
-				"lhp",
-				"push 1",
-				"add",
-				"shp"
+				"sw", // Store in heap address of dispatch table of the instance
+				"lhp", // Duplicate lhp
+				"lhp", "push 1", "add", // Increment lhp
+				"shp" // Store incremented lhp
 		);
 	}
 }
