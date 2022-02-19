@@ -54,7 +54,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         Map<String, STentry> hm = symTable.get(nestingLevel);
         List<TypeNode> parTypes = new ArrayList<>();
         for (ParNode par : n.parlist) {
+            if(!isTypeDefined(par.getType())) {
+                System.out.println("Fun " + n.id + ": has unknown parameter type " + par.getType());
+                stErrors++;
+            }
             parTypes.add(par.getType());
+        }
+        if(!isTypeDefined(n.retType)) {
+            System.out.println("Fun " + n.id + ": has unknown return type " + n.retType);
+            stErrors++;
         }
         STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), decOffset--);
         //inserimento di ID nella symtable
@@ -70,11 +78,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         decOffset = -2;
 
         int parOffset = 1;
-        for (ParNode par : n.parlist)
+        for (ParNode par : n.parlist) {
             if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
                 System.out.println("Par id " + par.id + " at line " + n.getLine() + " already declared");
                 stErrors++;
             }
+        }
+
         for (Node dec : n.declist) visit(dec);
         visit(n.exp);
         //rimuovere la hashmap corrente poiche' esco dallo scope
@@ -88,6 +98,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         if (print) printNode(n);
         visit(n.exp);
         Map<String, STentry> hm = symTable.get(nestingLevel);
+        if(!isTypeDefined(n.getType())) {
+            System.out.println("Var id " + n.id + " has unknown type " + n.getType());
+            stErrors++;
+        }
         STentry entry = new STentry(nestingLevel, n.getType(), decOffset--);
         //inserimento di ID nella symtable
         if (hm.put(n.id, entry) != null) {
@@ -298,6 +312,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
                 } else {
                     offset = parOffset--;
                 }
+                if(!isTypeDefined(field.getType())) {
+                    System.out.println("Field " + n.id + " has unknown type " + n.getType());
+                    stErrors++;
+                }
                 hmn.put(field.id, new STentry(nestingLevel, field.getType(), offset));
 
                 field.offset = offset;
@@ -331,6 +349,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         Map<String, STentry> hm = symTable.get(nestingLevel);
         List<TypeNode> parTypes = new ArrayList<>();
         for (ParNode par : n.parlist) {
+            if(!isTypeDefined(par.getType())) {
+                System.out.println("Method " + n.id + ": has unknown parameter type " + par.getType());
+                stErrors++;
+            }
             parTypes.add(par.getType());
         }
         //inserimento di ID nella symtable
@@ -349,6 +371,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             offset = currentSTEntry.offset;
         } else {
             offset = decOffset++;
+        }
+        if(!isTypeDefined(n.retType)) {
+            System.out.println("Method " + n.id + ": has unknown return type " + n.retType);
+            stErrors++;
         }
         entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes, n.retType)), offset);
         hm.put(n.id, entry);
@@ -449,10 +475,21 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
                     .toList();
             if(!argsLeft.isEmpty()) {
                 String undefinedArgs = String.join(", ",   argsLeft);
-                System.out.println("Args named " + undefinedArgs + " at line " + n.getLine() + " not declared");
+                System.out.println("Args named " + undefinedArgs + " at line " + n.getLine() + " not set");
                 stErrors++;
             }
         }
         return null;
+    }
+
+
+
+    private boolean isTypeDefined(TypeNode type) {
+        if (type instanceof BoolTypeNode || type instanceof IntTypeNode || type instanceof EmptyTypeNode) {
+            return true;
+        } else if (type instanceof RefTypeNode refType){
+            return classTable.containsKey(refType.id);
+        }
+        return false;
     }
 }

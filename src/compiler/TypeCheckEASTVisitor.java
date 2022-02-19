@@ -44,14 +44,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(FunNode n) throws TypeException {
 		if (print) printNode(n,n.id);
-		if(!isTypeDefined(n.retType)) {
-			throw new TypeException("Fun " + n.id + ": has unknown return type " + n.retType, n.getLine());
-		}
-		for (ParNode par : n.parlist) {
-			if(!isTypeDefined(par.getType())) {
-				throw new TypeException("Fun " + n.id + ": has unknown parameter type " + par.getType(), n.getLine());
-			}
-		}
 		for (Node dec : n.declist)
 			try {
 				visit(dec);
@@ -67,9 +59,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(VarNode n) throws TypeException {
 		if (print) printNode(n,n.id);
-		if(!isTypeDefined(n.getType())) {
-			throw new TypeException("Var id " + n.id + " has unknown type " + n.getType(), n.getLine());
-		}
 		if ( !isSubtype(visit(n.exp),ckvisit(n.getType())) )
 			throw new TypeException("Incompatible value for variable " + n.id,n.getLine());
 		return null;
@@ -261,7 +250,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	public TypeNode visitNode(ClassNode n) throws TypeException {
 		if (print) printNode(n);
 		superType.put(n.id, n.superID);
-		classesIds.add(n.id);
 		for (MethodNode method : n.methods) visitNode(method);
 		for (FieldNode field : n.fields) visitNode(field);
 
@@ -292,14 +280,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(MethodNode n) throws TypeException {
 		if (print) printNode(n,n.id);
-		if(!isTypeDefined(n.retType)) {
-			throw new TypeException("Method " + n.id + ": has unknown return type " + n.retType, n.getLine());
-		}
-		for (ParNode par : n.parlist) {
-			if(!isTypeDefined(par.getType())) {
-				throw new TypeException("Method " + n.id + ": has unknown parameter type " + par.getType(), n.getLine());
-			}
-		}
 		for (Node dec : n.declist)
 			try {
 				visit(dec);
@@ -314,9 +294,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 
 	@Override
 	public TypeNode visitNode(FieldNode n) throws TypeException {
-		if(!isTypeDefined(n.getType())) {
-			throw new TypeException("Field " + n.id + " has unknown type " + n.getType(), n.getLine());
-		}
 		ckvisit(n.getType());
 		return null;
 	}
