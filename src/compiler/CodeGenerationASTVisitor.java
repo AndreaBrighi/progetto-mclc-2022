@@ -311,7 +311,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		n.label = methl;
 		putCode(
 				nlJoin(
-						"/*MethodNode*/" + methl+":",
+						methl+":",
 						"cfp", // set $fp to $sp value
 						"lra", // load $ra value
 						declCode, // generate code for local declarations (they use the new $fp!!!)
@@ -366,7 +366,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		}
 
 		return nlJoin(
-				"/*ClassNode*/" + "lhp",
+				"lhp",
 				hpContent
 		);
 	}
@@ -374,7 +374,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(EmptyNode n) throws VoidException {
 		return nlJoin(
-				"/*EmptyNode*/" + "push -1"
+				"push -1"
 		);
 	}
 
@@ -385,7 +385,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String argCode = null, getAR = null;
 		for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
 		for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
-		return "/*ClassCallNode*/" + nlJoin(
+		return nlJoin(
 				"lfp", // load Control Link (pointer to frame of function "id" caller)
 				argCode, // generate code for argument expressions in reversed order
 				"lfp", getAR, // retrieve address of frame containing "ID1" declaration
@@ -419,7 +419,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		}
 		int pos = ExecuteVM.MEMSIZE+n.entry.offset;
 		return nlJoin(
-				"/*NewNode*/" + argCode,
+				argCode,
 				copyArgCode,
 				"push " + pos,
 				"lw",
@@ -445,7 +445,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i = 0; i < n.arglist.size(); i++)
 			getPar = nlJoin(getPar, "lhp", "sw", "lhp", "push 1", "add", "shp");
 		return nlJoin(
-				"/*NNewNode*/"+argCode,
+				argCode,
 				getPar,// generate code for argument expressions in reversed order
 				"push " + ExecuteVM.MEMSIZE, // retrieve address of frame containing class "id" declaration
 				"push " + n.entry.offset, "add", // compute address of "id" declaration
