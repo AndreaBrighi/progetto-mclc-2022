@@ -334,7 +334,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return n;
     }
 
-    // KEY ARGUMENT EXTENSION
+    // NAMED ARGUMENTS EXTENSION
 
 
     @Override
@@ -349,7 +349,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
         Node n = null;
         if (c.ID().size() > 0) {
-            n= new NNamedNode(c.ID(0).getText(),argList);
+            n= new NNewNode(c.ID(0).getText(),argList);
             n.setLine(c.NEW().getSymbol().getLine());
         }
         return n;

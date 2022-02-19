@@ -392,7 +392,7 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	//KEY ARGUMENT EXTENSION
+	// NAMED ARGUMENTS EXTENSION
 
 	public static class NArgNode extends Node {
 		final String id;
@@ -409,12 +409,12 @@ public class AST {
 	}
 
 
-	public static class NNamedNode extends Node {
+	public static class NNewNode extends Node {
 		final String id;
 		STentry entry;
 		final List<NArgNode> arglist;
 
-		public NNamedNode(String id, List<NArgNode> arglist) {
+		public NNewNode(String id, List<NArgNode> arglist) {
 			this.id = id;
 			this.arglist = Collections.unmodifiableList(arglist);
 		}
