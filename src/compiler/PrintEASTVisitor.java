@@ -274,4 +274,23 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 		printNode(n);
 		return null;
 	}
+
+	// NAMED ARGUMENTS EXTENSION
+
+
+	@Override
+	public Void visitNode(NNewNode n) throws VoidException {
+		printNode(n, n.id);
+		visit(n.entry);
+		for(NArgNode an : n.arglist) visit(an);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(NArgNode n) throws VoidException {
+		printNode(n, n.id);
+		visit(n.entry);
+		visit(n.exp);
+		return null;
+	}
 }
