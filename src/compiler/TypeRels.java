@@ -8,17 +8,7 @@ import java.util.*;
 public class TypeRels {
 
 	public static Map<String, String> superType = new HashMap<>();
-	public static Set<String> classesIds = new HashSet<>();
 
-
-	public static boolean isTypeDefined(TypeNode type) {
-		if (type instanceof BoolTypeNode || type instanceof IntTypeNode || type instanceof EmptyTypeNode) {
-			return true;
-		} else if (type instanceof RefTypeNode refType){
-			return classesIds.contains(refType.id);
-		}
-		return false;
-	}
 	public static boolean isSubtype(TypeNode a, TypeNode b) {
 		if ((a instanceof ArrowTypeNode atn) && (b instanceof ArrowTypeNode btn)) {
 			if (atn.parlist.size() != btn.parlist.size()) return false;
