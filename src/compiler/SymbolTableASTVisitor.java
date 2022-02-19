@@ -244,85 +244,84 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         classFM = new HashSet<>();
         Map<String, STentry> hm = symTable.get(nestingLevel);
 
-        ClassTypeNode classTypeN;
+        ClassTypeNode classTypeN = null;
+        Map<String, STentry> hmn = null;
         if (n.superID != null) {
             STentry superEntry = hm.get(n.superID);
-            ClassTypeNode superNode = (ClassTypeNode) superEntry.type;
-            classTypeN = new ClassTypeNode(new ArrayList<>(superNode.allFields), new ArrayList<>(superNode.allMethods));
-
-            // Set super entry
-            n.superEntry = superEntry;
-        } else {
-            classTypeN = new ClassTypeNode(new ArrayList<>(), new ArrayList<>());
-        }
-        n.setType(classTypeN);
-        STentry entry = new STentry(nestingLevel, classTypeN, decOffset--);
-        //inserimento di ID nella symtable
-        if (hm.put(n.id, entry) != null) {
-            System.out.println("Class id " + n.id + " at line " + n.getLine() + " already declared");
-            stErrors++;
-        }
-        // Aggiunta del nome della classe mappato a virtual table
-        Map<String, STentry> hmn;
-        if (n.superID != null) {
-            if (!classTable.containsKey(n.superID)) {
+            if (superEntry == null) {
                 System.out.println("Super class " + n.superID + " at line " + n.getLine() + " not declared");
                 stErrors++;
+            } else {
+                ClassTypeNode superNode = (ClassTypeNode) superEntry.type;
+                classTypeN = new ClassTypeNode(new ArrayList<>(superNode.allFields), new ArrayList<>(superNode.allMethods));
+
+                // Set super entry
+                n.superEntry = superEntry;
+                hmn = new HashMap<>(classTable.get(n.superID));
             }
-            hmn = new HashMap<>(classTable.get(n.superID));
         } else {
+            classTypeN = new ClassTypeNode(new ArrayList<>(), new ArrayList<>());
             hmn = new HashMap<>();
         }
-        classTable.put(n.id, hmn);
-
-        nestingLevel++;
-        symTable.add(hmn);
-        int prevNLDecOffset = decOffset; // stores counter for offset of declarations at previous nesting level
-
-        // Method offset starts at superclass method count
-        decOffset = (classTypeN.allMethods.size());
-
-        // Par offset starts at superclass field count +1
-        int parOffset = -(classTypeN.allFields.size() + 1);
-        for (FieldNode field : n.fields) {
-            STentry currentSTEntry = hmn.get(field.id);
-            if (!classFM.add(field.id)) {
-                System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
+        if (classTypeN != null /*&& hmn != null */) {
+            n.setType(classTypeN);
+            STentry entry = new STentry(nestingLevel, classTypeN, decOffset--);
+            classTable.put(n.id, hmn);
+            //inserimento di ID nella symtable
+            if (hm.put(n.id, entry) != null) {
+                System.out.println("Class id " + n.id + " at line " + n.getLine() + " already declared");
                 stErrors++;
             }
-            int offset;
-            if (currentSTEntry != null) {
-                if (currentSTEntry.type instanceof MethodTypeNode) {
-                    System.out.println("Can't override method " + field.id + " with a field");
+
+            nestingLevel++;
+            symTable.add(hmn);
+            int prevNLDecOffset = decOffset; // stores counter for offset of declarations at previous nesting level
+
+            // Method offset starts at superclass method count
+            decOffset = (classTypeN.allMethods.size());
+
+            // Par offset starts at superclass field count +1
+            int parOffset = -(classTypeN.allFields.size() + 1);
+            for (FieldNode field : n.fields) {
+                STentry currentSTEntry = hmn.get(field.id);
+                if (!classFM.add(field.id)) {
+                    System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
                     stErrors++;
                 }
-                offset = currentSTEntry.offset;
-            } else {
-                offset = parOffset--;
-            }
-            hmn.put(field.id, new STentry(nestingLevel, field.getType(), offset));
+                int offset;
+                if (currentSTEntry != null) {
+                    if (currentSTEntry.type instanceof MethodTypeNode) {
+                        System.out.println("Can't override method " + field.id + " with a field");
+                        stErrors++;
+                    }
+                    offset = currentSTEntry.offset;
+                } else {
+                    offset = parOffset--;
+                }
+                hmn.put(field.id, new STentry(nestingLevel, field.getType(), offset));
 
-            field.offset = offset;
-            int fieldIndex = Math.abs(offset) - 1;
-            if (fieldIndex < classTypeN.allFields.size()) {
-                classTypeN.allFields.set(fieldIndex, field.getType());
-            } else {
-                classTypeN.allFields.add(field.getType());
+                field.offset = offset;
+                int fieldIndex = Math.abs(offset) - 1;
+                if (fieldIndex < classTypeN.allFields.size()) {
+                    classTypeN.allFields.set(fieldIndex, field.getType());
+                } else {
+                    classTypeN.allFields.add(field.getType());
+                }
             }
-        }
-        for (MethodNode dec : n.methods) {
-            visit(dec);
-            int methodIndex = dec.offset;
-            ArrowTypeNode methodType = (ArrowTypeNode) dec.getType();
-            if (methodIndex < classTypeN.allMethods.size()) {
-                classTypeN.allMethods.set(methodIndex, methodType);
-            } else {
-                classTypeN.allMethods.add(methodType);
+            for (MethodNode dec : n.methods) {
+                visit(dec);
+                int methodIndex = dec.offset;
+                ArrowTypeNode methodType = (ArrowTypeNode) dec.getType();
+                if (methodIndex < classTypeN.allMethods.size()) {
+                    classTypeN.allMethods.set(methodIndex, methodType);
+                } else {
+                    classTypeN.allMethods.add(methodType);
+                }
             }
+            //rimuovere la hashmap corrente poiche' esco dallo scope
+            symTable.remove(nestingLevel--);
+            decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
         }
-        //rimuovere la hashmap corrente poiche' esco dallo scope
-        symTable.remove(nestingLevel--);
-        decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
         return null;
     }
 
