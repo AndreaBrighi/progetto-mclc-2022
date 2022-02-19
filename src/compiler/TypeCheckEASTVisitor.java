@@ -404,7 +404,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 
 	@Override
 	public TypeNode visitNode(NArgNode n) throws TypeException {
-		if ( !(isSubtype(visit(n.exp), n.entry.type)) )
+		// If entry is not set we can't check entry type is subtype of exp
+		if (n.entry == null)
+			throw new TypeException("No argument named "+(n.id)+" in the instantiation of class",n.getLine());
+		if (!(isSubtype(visit(n.exp), n.entry.type)) )
 			throw new TypeException("Wrong type for "+(n.id)+" argument in the instantiation of class",n.getLine());
 		return null;
 	}
