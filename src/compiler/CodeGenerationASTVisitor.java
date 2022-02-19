@@ -6,6 +6,7 @@ import compiler.exc.*;
 import svm.ExecuteVM;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static compiler.lib.FOOLlib.*;
@@ -424,6 +425,33 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"push 1",
 				"add",
 				"shp" // Store incremented lhp
+		);
+	}
+
+	@Override
+	public String visitNode(NNewNode n) throws VoidException {
+		if (print) printNode(n, n.id);
+		String argCode = null, getPar = null;
+		List<NArgNode> map = new ArrayList<>(Collections.nCopies(n.arglist.size(), null));
+		for (NArgNode node : n.arglist) {
+			map.set(-node.entry.offset - 1, node);
+		}
+		for (NArgNode nArgNode : map) argCode = nlJoin(argCode, visit(nArgNode.exp));
+		for (int i = 0; i < n.arglist.size(); i++)
+			getPar = nlJoin(getPar, "lhp", "sw", "lhp", "push 1", "add", "shp");
+		return nlJoin(
+				"/*NNewNode*/"+argCode,
+				getPar,// generate code for argument expressions in reversed order
+				"push " + ExecuteVM.MEMSIZE, // retrieve address of frame containing class "id" declaration
+				"push " + n.entry.offset, "add", // compute address of "id" declaration
+				"lw", // load value of "id" variable
+				"lhp",
+				"sw",
+				"lhp",
+				"lhp",
+				"push 1",
+				"add",
+				"shp"
 		);
 	}
 }
