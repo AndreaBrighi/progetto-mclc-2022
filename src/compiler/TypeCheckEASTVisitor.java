@@ -68,7 +68,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	public TypeNode visitNode(VarNode n) throws TypeException {
 		if (print) printNode(n,n.id);
 		if(!isTypeDefined(n.getType())) {
-			throw new TypeException("Var id " + n.id + "has unknown type " + n.getType(), n.getLine());
+			throw new TypeException("Var id " + n.id + " has unknown type " + n.getType(), n.getLine());
 		}
 		if ( !isSubtype(visit(n.exp),ckvisit(n.getType())) )
 			throw new TypeException("Incompatible value for variable " + n.id,n.getLine());
