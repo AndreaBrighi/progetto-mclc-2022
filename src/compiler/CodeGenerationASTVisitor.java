@@ -345,7 +345,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		dispatchTables.add(dispatchTable);
 		for (MethodNode dec : n.methods) {
 			visit(dec);
-			dispatchTable.add(dec.offset, dec.label);
+			if (dec.offset < dispatchTable.size()) {
+				dispatchTable.set(dec.offset, dec.label);
+			} else {
+				dispatchTable.add(dec.offset, dec.label);
+			}
 		}
 
 		String hpContent = null;
@@ -402,9 +406,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	public String visitNode(NewNode n) throws VoidException {
 		if (print) printNode(n,n.id);
 		String argCode = null, copyArgCode = null;
-		for (int i=0; i< n.arglist.size(); i++) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
-		for (int i=0; i< n.arglist.size(); i++)
-			copyArgCode=nlJoin(copyArgCode,
+		for (int i=0; i< n.arglist.size(); i++) {
+			argCode = nlJoin(argCode, visit(n.arglist.get(i)));
+			copyArgCode = nlJoin(copyArgCode,
 					"lhp",
 					"sw",
 					"lhp",
@@ -412,9 +416,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"add",
 					"shp"
 			);
+		}
 		int pos = ExecuteVM.MEMSIZE+n.entry.offset;
 		return nlJoin(
-				"/*NewNode*/" + argCode, // generate code for argument expressions in reversed order
+				"/*NewNode*/" + argCode,
 				copyArgCode,
 				"push " + pos,
 				"lw",
